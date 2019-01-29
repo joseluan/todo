@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="author" content="José Luan Silva do Nascimento" />
+
+	<title>TODO</title>
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+		integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+		crossorigin="anonymous" />
+	<style>
+body {
+	background-color: #dfdfdf;
+}
+</style>
+</h:head>
+<h:body>
+	<p:growl id="messages" />
+	<p:tooltip />
+	<div class="container">
+		<div class="row" style="margin-top: 35px;">
+			<div class="col">
+				<center>
+					<h1>Tarefas</h1>
+				</center>
+			</div>
+		</div>
+		<h:form style="margin: 15px;">
+			<div class="row">
+				<div class="col-lg-6 col-md-6 col-sm-12">
+					<p:inputText value="#{ tarefaBean.tarefa.descricao }"
+						class="form-control" id="descricao" maxlength="255"
+						required="true" placeholder="O que precisa ser feito?"
+						onkeyup="if((event.keyCode==13)||(window.event.keyCode==13)){document.getElementById('botao').click();}" />
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-12">
+					<h:commandButton class="btn btn-dark" id="botao"
+						action="#{ tarefaBean.adicionar }" value="Adicionar" />
+				</div>
+			</div>
+		</h:form>
+		<h:panelGroup id="lista_tarefas">
+			<h:form>
+				<table class="table table-dark table-hover">
+					<tbody>
+						<ui:repeat var="tarefa" value="#{ tarefaBean.tarefas }">
+							<tr>
+								<th><h:commandButton
+										value="#{tarefaBean.nomeBotaoAlterar(tarefa)}"
+										class="btn #{tarefaBean.corBotaoAlterar(tarefa)}"
+										title="Marcar tarefa como #{tarefaBean.nomeBotaoAlterar(tarefa)}"
+										action="#{ tarefaBean.alterar(tarefa) }" ajax="false" /></th>
+								<th><p:commandLink value="#{tarefa.descricao}"
+										style="text-decoration: none; color: #fefefe;font-family: Arial;font-size: 14spt; "
+										actionListener="#{tarefaBean.selecionarTarefa(tarefa)}" /></th>
+								<th><h:commandButton value="Remover" title="Apagar tarefa"
+										class="btn btn-dark" action="#{ tarefaBean.retirar(tarefa) }"
+										ajax="false" /></th>
+							</tr>
+						</ui:repeat>
+					</tbody>
+				</table>
+			</h:form>
+		</h:panelGroup>
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12">
+				<center>
+					<h:form>
+						<div class="btn-group">
+							<h:commandButton value="Todas" title="Mostrar todas as tarefas"
+								class="btn btn-light" ajax="true">
+								<f:ajax listener="#{ tarefaBean.mostrarTodasTarefas }"
+									execute="@form" render="lista_tarefas" event="click" />
+							</h:commandButton>
+							<h:commandButton value="Concluidas"
+								title="Mostrar tarefas concluidas" class="btn btn-light"
+								ajax="true">
+								<f:ajax listener="#{ tarefaBean.mostrarTarefasConcluidas }"
+									execute="@form" render="lista_tarefas" event="click" />
+							</h:commandButton>
+							<h:commandButton value="Pendentes"
+								title="Mostrar tarefas pendentes" class="btn btn-light"
+								ajax="true">
+								<f:ajax listener="#{ tarefaBean.mostrarTarefasAguardando }"
+									execute="@form" render="lista_tarefas" event="click" />
+							</h:commandButton>
+						</div>
+					</h:form>
+				</center>
+			</div>
+		</div>
+	</div>
+
+	<p:dialog header="Editar Tarefa" widgetVar="ModalTarefa" modal="true"
+		height="330" id="dialogo">
+		<center>
+			<h:form>
+				<p:inputText value="#{ tarefaBean.tarefaSelecionada.descricao }"
+					class="form-control" id="descricao" maxlength="255" required="true"
+					placeholder="O que precisa ser feito?"
+					onkeyup="if((event.keyCode==13)||(window.event.keyCode==13)){document.getElementById('botao').click();}" />
+				<br />
+				<h:commandButton class="btn btn-primary" id="botao_editar"
+					action="#{ tarefaBean.atualizar }" value="Alterar" />
+			</h:form>
+		</center>
+	</p:dialog>
+</h:body>
+</html>
